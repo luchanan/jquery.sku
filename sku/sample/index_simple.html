@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="keywords" content="" >
+		<meta name="description" content="">
+		<meta content="yes" name="apple-mobile-web-app-capable" />
+		<meta content="yes" name="apple-touch-fullscreen" />
+		<meta name="full-screen" content="yes">
+		<meta name="x5-fullscreen" content="true" />
+		<meta name="screen-orientation" content="portrait">
+		<meta name="x5-orientation" content="portrait">
+		<meta content="telephone=no,email=no" name="format-detection" />
+		<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+		<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+        <link rel="stylesheet" type="text/css" href="../mcssreset.css">
+        <script type="text/javascript" src="../zepto.min.js"></script>
+		<title>简单的：sku规格组合确定sku库存和数量(淘宝UED第二种算法优化案例)</title>
+	</head>
+	<body>
+        <div id="attr_collect">
+            <!-- <div class="attr_wrap">
+                <h1 class="title">机身颜色</h1>
+                <div class="attr">
+                    <i>白色 银白未激活4.7</i>
+                    <i class="selected">白色 银白未激活4.7</i>
+                    <i>白色 银白未激活4.7</i>
+                    <i>白色 银白未激活4.7</i>
+                </div>
+            </div> -->
+        </div>
+        <div id="showInfo" style="display:block"><span>价格：<i id="price"></i></span><span>库存：<i id="count"></i></span><div>规格值拼接(根据这个来确定一个sku)：<span id="sku_id"></span></div></div>
+        <div class="btn_wrap"><input type="button" value="加入购物车" id="join"></div>
+        <script type="text/javascript" src="sku_simple.js"></script>
+	</body>
+</html>

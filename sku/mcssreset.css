@@ -1,0 +1,156 @@
+@charset "utf-8";
+*{
+	box-sizing:border-box;
+}
+body, h1, h2, h3, h4, h5, h6, hr, p, blockquote, dl, dt, dd, ul, ol, li, pre, fieldset, lengend, button, input, textarea, th, td,menu{
+	margin: 0;
+	padding: 0;
+}
+/*分别设置IOS，安卓，winphone默认中英文，数字*/
+body {
+	font: 100%/1.5 'Heiti SC', 'Helvetica', 'HelveticaNeue', 'Droidsansfallback', "Droid Sans", 'Dengxian', 'Segoe', 'microsoft yahei';
+}
+h1, h2, h3, h4, h5, h6 {
+	font-weight: normal;
+	font-size: 100%;
+}
+address, cite, dfn, em, var, i {
+	font-style: normal;
+}
+code, kbd, pre, samp, tt {
+	font-family: "Courier New", Courier, monospace;
+}
+small {
+	font-size: 12px;
+}
+ul, ol {
+	list-style: none;
+}
+a {
+	text-decoration: none;
+	display:block;
+}
+a:focus, input:focus, textarea:focus {
+	outline: none;
+}
+a:link, a:visited {
+	color: #333333;
+}
+a:hover, a:active {
+	color: #ff1f1a;
+	text-decoration: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+/* 禁止拉伸 */
+textarea {
+	resize: none;
+}
+/* 改变iPhone中按钮默认样式 */
+input[type="button"], input[type="submit"], input[type="reset"], input[type="file"]::-webkit-file-upload-button, button {
+ -webkit-appearance:none;
+}
+/* 禁用iPhone中Safari的字号自动调整 */
+html {
+	-webkit-text-size-adjust: none;
+	font-size:100%;/*rem根元素10px=1rem*/
+}
+/* 设置HTML5元素为块 */
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+/* 设置图片视频等自适应调整 */
+img, embed, object, video, iframe {
+	width: auto;
+	max-width: 100%;
+	height: auto;
+}
+body,html{
+	max-width:640px;
+	margin:0 auto;
+	background: #eee;
+}
+/*以下为公用部分*/
+.ellipsis {
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
+.break {
+	word-break: break-all;
+	word-wrap: break-word
+}
+.clearfix:after {
+	content: "";
+	display: block;
+	height: 0;
+	clear: both;
+	visibility: hidden;
+}
+.clearfix{
+	zoom: 1;
+}
+/**/
+#attr_collect,#showInfo{
+    padding: 0 15px;
+}
+#showInfo{
+    display:none;
+}
+#showInfo span:not(:first-child){
+    margin-left:20px;
+}
+.attr_wrap{
+    margin: 16px 0;
+}
+.attr_wrap .title{
+    padding-bottom: 12px;
+    border-bottom: 1px #ddd solid;
+}
+.attr{
+    margin-top: 6px;
+    margin-right: -10px;
+    font-size:12px;
+}
+
+.attr_wrap i{
+	border: 1px #c5c8cf solid;
+    height: 28px;
+    line-height: 28px;
+    background-color: #fff;
+    border-radius: 3px;
+    padding: 0 8px;
+    margin: 10px 10px 0 0;
+    display: inline-block;
+    text-align: center;
+    overflow: hidden;
+    vertical-align: middle;
+}
+.attr_wrap i.selected{
+    background-color: #ff5000;
+    color: #fff;
+    border:solid 1px #ff5000;
+}
+.attr_wrap i.disabled {
+    color: #cfcfcf;
+    pointer-events:none;
+}
+.btn_wrap{
+	padding:15px;
+	position: fixed;
+	width:100%;
+	bottom:0;
+	left:0;
+}
+#join{
+	background-color: #0298ff;
+    width: 100%;
+    display: block;
+    height:50px;
+    line-height: 50px;
+    border:none;
+    color:#fff;
+    font-size: 14px;
+}
