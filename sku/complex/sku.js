@@ -4,7 +4,7 @@ $(function(){
    $.getJSON('data_sku.json', function(data) {
         sku_data=data;
         var attr_wrap='';
-        //format_list规格循环
+        //format_list规格值循环
         $.each(data.format_list, function(index, val) {
             var attr_inner=''
             attr_wrap+='<div class="attr_wrap">\
@@ -18,7 +18,7 @@ $(function(){
         });
         $("#attr_collect").append(attr_wrap);
         setSku();//初始化sku状态
-        console.log(SKUResult);
+        console.log(SKUResult, 'SKUResult');
         $("#join").click(function(){
             var str=isSelectAll();
             if(str.length>0){
@@ -65,6 +65,7 @@ function setSku(){
             //用已选中的节点验证待测试节点 underTestObjs
             $(".sku").not(selectedObjs).not(self).each(function() {
                 var siblingsSelectedObj = $(this).siblings('.selected');
+                console.log(siblingsSelectedObj)
                 var testAttrIds = [];//从选中节点中去掉选中的兄弟节点
                 if(siblingsSelectedObj.length) {
                     var siblingsSelectedObjId = siblingsSelectedObj.data('skuid');
@@ -101,6 +102,7 @@ function confimSku(){
     $.each(sku_data.sku_sale_list,function(key,val){
         if(val.format_val_id===attr_col){
             $("#confirm_id").val(val.sku_sale_id);
+            console.log('sku_id:' + val.sku_sale_id)
         }
         return;
     })
@@ -143,15 +145,16 @@ function pingSku(){
 function initSku(){
     var i,
         j,
-        skuKeys = getObjKeys(sku_data.sku_sale_list);// 拿到数组的format_val_id， 返回的是键数组["110;310", "110;311", "111;312", "112;311"]
+        skuKeys = getObjKeys(sku_data.sku_sale_list);// 拿到数组的sku， 返回的是键数组["110;310", "110;311", "111;312", "112;311"]
         console.log(skuKeys, 'skuKeys')
     for(i = 0; i < skuKeys.length; i++) {
-        var skuKey = skuKeys[i];//一条SKU信息key
-        //console.log(skuKey);
-        var sku = sku_data.sku_sale_list; // 一条SKU信息value,主要拿这个的price和库存
+        var skuKey = skuKeys[i];// 一条SKU信息key， 如 110;210;311;414
+        console.log(skuKey,'单个skuKey');
+        let index = sku_data.sku_sale_list.findIndex(items => items.format_val_id == skuKey)
+        var sku = index > -1 ? sku_data.sku_sale_list[index].stock_price_list : 0; // 一条SKU信息value,主要拿这个的price和库存
         console.log(sku, `第${i}条sku`)
-        var skuKeyAttrs = skuKey.split(";"); //分割SKU key;
-        console.log(skuKeyAttrs);
+        var skuKeyAttrs = skuKey.split(";"); //将sku 分割SKU key;
+        console.log(skuKeyAttrs, '分割单个skuKey');
         //对分割SKU key 从小到大排序
         skuKeyAttrs.sort(function(value1, value2) {
             return parseInt(value1) - parseInt(value2);
@@ -164,10 +167,7 @@ function initSku(){
         }
         //结果集接放入SKUResult
         console.log(sku, 'sku')
-        SKUResult[skuKeyAttrs.join(";")] = {
-            // count:sku.count,
-            // prices:[sku.price]
-        }
+        SKUResult[skuKeyAttrs.join(";")] = sku
     }
 }
 //获得对象的key(键)

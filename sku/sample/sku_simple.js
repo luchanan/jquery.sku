@@ -153,6 +153,7 @@ function initSku(){
             prices:[sku.price]
         }
     }
+    console.log(SKUResult)
 }
 //获得对象的key(键)
 function getObjKeys(obj) {
