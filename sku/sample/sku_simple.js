@@ -135,7 +135,7 @@ function initSku(){
         var skuKey = skuKeys[i];//一条SKU信息key
         //console.log(skuKey);
         var sku = sku_data.sku_sale_list[skuKey]; //一条SKU信息value
-        //console.log(sku);
+        // console.log(sku);
         var skuKeyAttrs = skuKey.split(";"); //分割SKU key;
         //对分割SKU key 从小到大排序
         skuKeyAttrs.sort(function(value1, value2) {

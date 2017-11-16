@@ -60,8 +60,8 @@ function setSku(){
             var num = SKUResult[selectedIds.join(';')].count;
             var maxPrice = Math.max.apply(Math, prices);
             var minPrice = Math.min.apply(Math, prices);
-            //$('#price').text(maxPrice > minPrice ? minPrice + "-" + maxPrice : maxPrice);
-            //$('#count').text(num);
+            // $('#price').text(maxPrice > minPrice ? minPrice + "-" + maxPrice : maxPrice);
+            // $('#count').text(num);
             //用已选中的节点验证待测试节点 underTestObjs
             $(".sku").not(selectedObjs).not(self).each(function() {
                 var siblingsSelectedObj = $(this).siblings('.selected');
@@ -86,7 +86,7 @@ function setSku(){
             });
         } else {
             //设置默认价格
-            //$('#price').text('--');
+            $('#price').text('--');
             //设置属性状态
             $('.sku').each(function() {
                 SKUResult[$(this).data('skuid')] ? $(this).removeClass('disabled') : $(this).addClass('disabled').removeClass('selected');
@@ -94,14 +94,62 @@ function setSku(){
         }
     });
 }
+//根据规格值id拼接，确定一个sku
+function confimSku(){
+    var attr_col=$("#sku_id").text();
+    $("#confirm_id").val('');
+    $.each(sku_data.sku_sale_list,function(key,val){
+        if(val.format_val_id===attr_col){
+            $("#confirm_id").val(val.sku_sale_id);
+        }
+        return;
+    })
+}
+function showInfo(){
+    var flag=isSelectAll();
+    if(flag.length===0){
+        $("#showInfo").show();
+    }
+    else{
+        $("#showInfo").hide();
+    }
+}
+//判断规格是否全部选中
+function isSelectAll(){
+    var tip_str=[];
+    $("#attr_collect .attr_wrap").each(function(key,val){
+        var isSelected=$(this).find(".selected").size();
+        if(isSelected===0){
+            tip_str.push($(this).children('.title').text());
+        }
+    });
+    var len=tip_str.length;
+    $("#sku_id").text(pingSku());
+    confimSku();
+    return tip_str.join(',');
+}
+//规格值id拼接
+function pingSku(){
+    var str=[];
+    $("#attr_collect .attr_wrap").each(function(key,val){
+        var ele=$(this).find(".selected");
+        if(ele.length>0){
+            str.push($(ele).data('skuid'));
+        }
+    });
+    str=str.join(';');
+    return str;
+}
 function initSku(){
     var i,
         j,
-        skuKeys = getObjKeys(sku_data.sku_sale_list);//返回的是键数组["110;310", "110;311", "111;312", "112;311"]
+        skuKeys = getObjKeys(sku_data.sku_sale_list);// 拿到数组的format_val_id， 返回的是键数组["110;310", "110;311", "111;312", "112;311"]
+        console.log(skuKeys, 'skuKeys')
     for(i = 0; i < skuKeys.length; i++) {
         var skuKey = skuKeys[i];//一条SKU信息key
         //console.log(skuKey);
-        var sku = sku_data.sku_sale_list[skuKey]; //一条SKU信息value
+        var sku = sku_data.sku_sale_list; // 一条SKU信息value,主要拿这个的price和库存
+        console.log(sku, `第${i}条sku`)
         var skuKeyAttrs = skuKey.split(";"); //分割SKU key;
         console.log(skuKeyAttrs);
         //对分割SKU key 从小到大排序
@@ -115,9 +163,10 @@ function initSku(){
 
         }
         //结果集接放入SKUResult
+        console.log(sku, 'sku')
         SKUResult[skuKeyAttrs.join(";")] = {
-            /*count:sku.count,
-            prices:[sku.price]*/
+            // count:sku.count,
+            // prices:[sku.price]
         }
     }
 }
@@ -220,49 +269,3 @@ function add2SKUResult(combArrItem, sku) {
 }
 //保存最后的组合结果信息
 var SKUResult = {};
-//根据规格值id拼接，确定一个sku
-function confimSku(){
-    var attr_col=$("#sku_id").text();
-    $("#confirm_id").val('');
-    $.each(sku_data.sku_sale_list,function(key,val){
-        if(val.format_val_id===attr_col){
-            $("#confirm_id").val(val.sku_sale_id);
-        }
-        return;
-    })
-}
-function showInfo(){
-    var flag=isSelectAll();
-    if(flag.length===0){
-        $("#showInfo").show();
-    }
-    else{
-        $("#showInfo").hide();
-    }
-}
-//判断规格是否全部选中
-function isSelectAll(){
-    var tip_str=[];
-    $("#attr_collect .attr_wrap").each(function(key,val){
-        var isSelected=$(this).find(".selected").size();
-        if(isSelected===0){
-            tip_str.push($(this).children('.title').text());
-        }
-    });
-    var len=tip_str.length;
-    $("#sku_id").text(pingSku());
-    confimSku();
-    return tip_str.join(',');
-}
-//规格值id拼接
-function pingSku(){
-    var str=[];
-    $("#attr_collect .attr_wrap").each(function(key,val){
-        var ele=$(this).find(".selected");
-        if(ele.length>0){
-            str.push($(ele).data('skuid'));
-        }
-    });
-    str=str.join(';');
-    return str;
-}
