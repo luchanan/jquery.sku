@@ -53,6 +53,21 @@ export default {
     }
   },
   methods: {
+    isSelectAll () {
+      // 属性组合是否确定了一个sku
+      let len = this.attrListValue.length
+      let selected = 0
+      this.attrListValue.forEach(items => {
+        let isSelected = items[this.attrListValueEachKey].some(aitems => aitems.selected === true)
+        if (isSelected) {
+          selected++
+        }
+      })
+      if (selected >= len) {
+        return true
+      }
+      return false
+    },
     attrStatus (row) {
       return {
         'status': !row.disabled,
