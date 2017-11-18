@@ -10,6 +10,7 @@
 </template>
 
 <script>
+// 业务： 这里获取sku的业务是根据属性组合确定一个SKU，然后拿到这个SKU ID， 去获取当月每天的库存和价格，类似定酒店的功能
 export default {
   name: 'vueSku',
   props: {
@@ -18,7 +19,7 @@ export default {
       required: true
     },
     options: {
-      type: Object
+      type: Object // 预留
     }
   },
   watch: {
@@ -26,13 +27,12 @@ export default {
       this.updateValue()
       this.initSku()
       this.initStatus()
-      console.log(this.skuData, 'skuData update')
-      console.log(this.attrListValue, 'attrListName')
-      console.log(this.skuListValue, 'skuListValue')
     }
   },
   data () {
     return {
+      params: {}, // options和默认参数合并到这里, 预留
+      defaultParams: {}, // 默认参数, 预留
       attrListName: 'format_list', // skuData 规格值key
       skuListName: 'sku_sale_list', // skuData sku key
       attrListKeyName: 'name', // 规格值key显示名字label， 属性所属类名字
@@ -44,26 +44,37 @@ export default {
       skuListValue: [], // sku array
       skuListValueName: 'format_val_name', // sku 规格组合name
       skuListValueId: 'format_val_id', // sku 规格组合id
+      skuName: 'stock_price_list', // sku key的name
       splitStr: ';', // sku id分割标志
-      selectedSkuInfo: {
-        id: '', // sku id
-        attrs: '' // 属性组合的sku
-      },
+      selectedSkuInfo: '', // 选中一个sku
       SKUResult: {} // 保存最后的组合结果信息
     }
+  },
+  mounted () {
+    Object.assign(this.params, this.defaultParams, this.options) // 默认参数和外面传过来的参数合并到params
   },
   methods: {
     isSelectAll () {
       // 属性组合是否确定了一个sku
       let len = this.attrListValue.length
       let selected = 0
+      let sku = []
       this.attrListValue.forEach(items => {
-        let isSelected = items[this.attrListValueEachKey].some(aitems => aitems.selected === true)
+        let isSelected = false
+        items[this.attrListValueEachKey].forEach(aitems => {
+          if (aitems.selected === true) {
+            sku.push(aitems[this.attrListValueId])
+            isSelected = true
+          }
+        })
         if (isSelected) {
           selected++
         }
       })
       if (selected >= len) {
+        // 属性组合确定了一个sku
+        this.selectedSkuInfo = this.SKUResult[sku.join(this.splitStr)]
+        console.warn(this.selectedSkuInfo, '选择的SKU信息为')
         return true
       }
       return false
@@ -85,31 +96,26 @@ export default {
         })
         return items
       })
-      console.log(this.attrListValue, 'new')
       this.skuListValue = this.skuData[this.skuListName]
     },
     initSku () {
       let skuKeys = this.getObjKeys(this.skuListValue)
-      console.log(skuKeys, 'skuKeys')
       for (let i = 0; i < skuKeys.length; i++) {
         let skuKey = skuKeys[i] // 一个sku信息
         let index = this.skuListValue.findIndex(items => items[this.skuListValueId] === skuKey)
-        let sku = index > -1 ? this.skuListValue[index].stock_price_list : {} // 一个sku信息对应的库存，价格， 这个可能要改，因为字段stock_price_list ！！！
+        let sku = index > -1 ? this.skuListValue[index][this.skuName] : {} // 一个sku信息对应的库存，价格， 这个可能要改，因为字段stock_price_list ！！！
         let skuKeyAttrs = skuKey.split(this.splitStr) // 将一个sku分割数组
         skuKeyAttrs.sort(function (value1, value2) {
           return parseInt(value1) - parseInt(value2) // 数组排序，从小到大
         })
-        console.log(sku, '单个sku price')
         // 对每个SKU信息key属性值进行拆分组合,形成一个新的数组
         var combArr = this.combInArray(skuKeyAttrs)
         for (let j = 0; j < combArr.length; j++) {
           this.add2SKUResult(combArr[j], sku)
         }
-        console.log(this.SKUResult, 'SKUResult')
-        this.SKUResult[skuKeyAttrs.join(this.splitStr)] = {
-          // 待处理
-        }
+        this.SKUResult[skuKeyAttrs.join(this.splitStr)] = sku
       }
+      console.log(this.SKUResult, 'this.SKUResult')
     },
     initStatus () {
       // 初始化选择状态
@@ -219,14 +225,13 @@ export default {
         }
         return items
       })
-      console.log(this.attrListValue, 'this.attrListValue')
+      this.isSelectAll()
       let selectedObjs = this.getSelected()
       if (selectedObjs.length) {
         let selectedIds = []
         selectedObjs.forEach(items => {
           selectedIds.push(+items[this.attrListKeyId])
         })
-        console.log(selectedIds, 'selectedIds')
         selectedIds.sort((value1, value2) => {
           // 从小到大排序
           return parseInt(value1) - parseInt(value2)
@@ -242,10 +247,8 @@ export default {
               })
               var testAttrIds = []
               if (siblingsSelectedObj.length) {
-                var siblingsSelectedObjId = +siblingsSelectedObj[0][this.attrListKeyId] // 一个所属类只有一个选择
+                var siblingsSelectedObjId = +siblingsSelectedObj[0][this.attrListKeyId] // 所属大类下的分类只有一个被选中
                 for (var i = 0; i < selectedIds.length; i++) {
-                  console.log(selectedIds[i])
-                  console.log(siblingsSelectedObjId)
                   if (selectedIds[i] !== siblingsSelectedObjId) {
                     testAttrIds.push(selectedIds[i])
                   }
@@ -257,11 +260,9 @@ export default {
               testAttrIds.sort((value1, value2) => {
                 return parseInt(value1) - parseInt(value2)
               })
-              console.log(!this.SKUResult[testAttrIds.join(this.splitStr)], '!this.SKUResult[testAttrIds.join(this.splitStr)]')
               if (!this.SKUResult[testAttrIds.join(this.splitStr)]) {
                 this.attrListValue[ipIndex][this.attrListValueEachKey][iaIndex].disabled = true
                 this.attrListValue[ipIndex][this.attrListValueEachKey][iaIndex].selected = false
-                console.log(this.attrListValue, 'this.SKUResult')
               } else {
                 this.attrListValue[ipIndex][this.attrListValueEachKey][iaIndex].disabled = false
               }
@@ -269,10 +270,10 @@ export default {
           })
         })
       } else {
-        // 设置属性状态
+        // 设置属性状态, 没有一个属性值被选中的话
         this.attrListValue.forEach((items, ipIndex) => {
           items[this.attrListValueEachKey].forEach((aitems, iaIndex) => {
-            if (this.SKUResult[attr[this.attrListValueId]]) {
+            if (this.SKUResult[aitems[this.attrListValueId]]) {
               this.attrListValue[ipIndex][this.attrListValueEachKey][iaIndex].disabled = false
             } else {
               this.attrListValue[ipIndex][this.attrListValueEachKey][iaIndex].disabled = true
@@ -286,10 +287,11 @@ export default {
       // 获取被选择的数据
       let selectedObjs = []
       this.attrListValue.forEach(items => {
-        let existSelected = items[this.attrListValueEachKey].filter(aitems => aitems.selected === true)
-        if (existSelected.length) {
-          selectedObjs.push(existSelected[0]) // 所属大类只有一个被选中
-        }
+        items[this.attrListValueEachKey].forEach(aitems => {
+          if (aitems.selected === true) {
+            selectedObjs.push(aitems) // 所属大类下的分类只有一个被选中
+          }
+        })
       })
       return selectedObjs
     }
@@ -303,7 +305,7 @@ export default {
       background: red
     }
     .disabled {
-      background: gray
+      background: rgba(0, 0, 0, .2)
     }
   }
 </style>

@@ -1,6 +1,9 @@
 <template>
   <div class="hello">
-    <vue-sku :skuData="skuData"></vue-sku>
+    <vue-sku :skuData="skuData" ref="sku"></vue-sku>
+    <p style="padding:20px"></p>
+    <input type="button" value="去支付" @click="pay">
+    <input type="button" value="console SKU数据格式" @click="format">
   </div>
 </template>
 
@@ -20,12 +23,22 @@ export default {
   },
   methods: {
     getSku () {
+      // 模拟异步
       setTimeout(() => {
+        // 父组件传递数据
         this.skuData = {
           format_list: skuDataResult.format_list,
           sku_sale_list: skuDataResult.sku_sale_list
         }
       }, 2000)
+    },
+    pay () {
+      if (!this.$refs.sku.isSelectAll()) {
+        alert('请选择商品')
+      }
+    },
+    format () {
+      console.dir(this.skuData)
     }
   }
 }
