@@ -197,48 +197,59 @@ export default {
         // 已经禁用不做任何处理
         return false
       }
-      let currentSelected = this.attrListValue[pIndex][this.attrListValueEachKey][aIndex]
-      this.attrListValue[pIndex][this.attrListValueEachKey][aIndex].selected = !currentSelected.selected // 自身外，其他不选
+      this.attrListValue[pIndex][this.attrListValueEachKey][aIndex].selected = !attr.selected // 自身外，其他不选
       this.attrListValue[pIndex][this.attrListValueEachKey] = this.attrListValue[pIndex][this.attrListValueEachKey].map(items => {
-        if (currentSelected[this.attrListValueId] !== items[this.attrListValueId]) {
+        if (attr[this.attrListValueId] !== items[this.attrListValueId]) {
           items.selected = false
         }
         return items
       })
+      console.log(this.attrListValue, 'this.attrListValue')
       let selectedObjs = this.getSelected()
       if (selectedObjs.length) {
         let selectedIds = []
         selectedObjs.forEach(items => {
-          selectedIds.push(items[this.attrListKeyId])
+          selectedIds.push(+items[this.attrListKeyId])
         })
+        console.log(selectedIds, 'selectedIds')
         selectedIds.sort((value1, value2) => {
           // 从小到大排序
           return parseInt(value1) - parseInt(value2)
         })
         this.attrListValue.forEach((items, ipIndex) => {
           items[this.attrListValueEachKey].forEach((aitems, iaIndex) => {
-            var siblingsSelectedObj = []
-            if (aitems.selected === true) {
-              siblingsSelectedObj.push(aitems)
-            }
-            var testAttrIds = []
-            if (siblingsSelectedObj.length) {
-              var siblingsSelectedObjId = siblingsSelectedObj[0][this.attrListKeyId]
-              for (var i = 0; i < selectedIds.length; i++) {
-                (selectedIds[i] !== siblingsSelectedObjId) && testAttrIds.push(selectedIds[i])
+            if (!aitems.selected) { // 未被选中的
+              var siblingsSelectedObj = [] // 选取所属类同级被选中的数据
+              items[this.attrListValueEachKey].forEach(siblingSelected => {
+                if (siblingSelected.selected) {
+                  siblingsSelectedObj.push(siblingSelected)
+                }
+              })
+              var testAttrIds = []
+              if (siblingsSelectedObj.length) {
+                var siblingsSelectedObjId = +siblingsSelectedObj[0][this.attrListKeyId] // 一个所属类只有一个选择
+                for (var i = 0; i < selectedIds.length; i++) {
+                  console.log(selectedIds[i])
+                  console.log(siblingsSelectedObjId)
+                  if (selectedIds[i] !== siblingsSelectedObjId) {
+                    testAttrIds.push(selectedIds[i])
+                  }
+                }
+              } else {
+                testAttrIds = selectedIds.concat()
               }
-            } else {
-              testAttrIds = selectedIds.concat()
-            }
-            testAttrIds = testAttrIds.concat(aitems[this.attrListKeyId])
-            testAttrIds.sort((value1, value2) => {
-              return parseInt(value1) - parseInt(value2)
-            })
-            if (!this.SKUResult[testAttrIds.join(this.splitStr)]) {
-              this.attrListValue[ipIndex][this.attrListValueEachKey][iaIndex].disabled = true
-              this.attrListValue[ipIndex][this.attrListValueEachKey][iaIndex].selected = false
-            } else {
-              this.attrListValue[ipIndex][this.attrListValueEachKey][iaIndex].disabled = false
+              testAttrIds = testAttrIds.concat(+aitems[this.attrListKeyId])
+              testAttrIds.sort((value1, value2) => {
+                return parseInt(value1) - parseInt(value2)
+              })
+              console.log(!this.SKUResult[testAttrIds.join(this.splitStr)], '!this.SKUResult[testAttrIds.join(this.splitStr)]')
+              if (!this.SKUResult[testAttrIds.join(this.splitStr)]) {
+                this.attrListValue[ipIndex][this.attrListValueEachKey][iaIndex].disabled = true
+                this.attrListValue[ipIndex][this.attrListValueEachKey][iaIndex].selected = false
+                console.log(this.attrListValue, 'this.SKUResult')
+              } else {
+                this.attrListValue[ipIndex][this.attrListValueEachKey][iaIndex].disabled = false
+              }
             }
           })
         })

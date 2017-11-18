@@ -63,6 +63,7 @@ function setSku(){
             // $('#price').text(maxPrice > minPrice ? minPrice + "-" + maxPrice : maxPrice);
             // $('#count').text(num);
             //用已选中的节点验证待测试节点 underTestObjs
+            console.log($(".sku").not(selectedObjs).not(self))
             $(".sku").not(selectedObjs).not(self).each(function() {
                 var siblingsSelectedObj = $(this).siblings('.selected');
                 console.log(siblingsSelectedObj)
