@@ -47,7 +47,7 @@ export default {
       skuName: 'stock_price_list', // sku key的name
       splitStr: ';', // sku id分割标志
       selectedSkuInfo: '', // 选中一个sku
-      SKUResult: {} // 保存最后的组合结果信息
+      SKUResult: {} // 保存最后的组合结果信息, 这个SKU信息
     }
   },
   mounted () {
@@ -73,7 +73,7 @@ export default {
       })
       if (selected >= len) {
         // 属性组合确定了一个sku
-        this.selectedSkuInfo = this.SKUResult[sku.join(this.splitStr)]
+        this.selectedSkuInfo = (this.skuListValue.filter(items => items[this.skuListValueId] === sku.join(this.splitStr)))[0]
         console.warn(this.selectedSkuInfo, '选择的SKU信息为')
         return true
       }
