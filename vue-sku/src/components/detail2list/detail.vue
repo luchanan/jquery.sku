@@ -3,6 +3,7 @@
     <ul>
       <li v-for="i in 2" :key="i">{{i}}</li>
     </ul>
+    <span @click="$router.go(-1)">返回</span>
   </div>
 </template>
 

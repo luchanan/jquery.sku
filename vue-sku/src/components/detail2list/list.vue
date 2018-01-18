@@ -1,7 +1,7 @@
 <template>
   <div class="detail2List">
     <ul>
-      <li v-for="i in 1000" :key="i"><router-link :to="{name: 'detail'}">{{i}}</router-link></li>
+      <li v-for="i in list" :key="i"><router-link :to="{name: 'detail'}">{{i}}</router-link></li>
     </ul>
   </div>
 </template>
@@ -15,13 +15,19 @@ export default {
   },
   data () {
     return {
+      list: []
     }
   },
   mounted () {
     console.log('mounted')
   },
   activated () {
-    console.log('activated')
+    setTimeout(() => {
+      for (let i = 0; i < 1000; i++) {
+        this.list.push(i)
+      }
+      console.log('activated')
+    }, 2000)
   },
   methods: {
   }

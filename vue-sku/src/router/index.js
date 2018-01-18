@@ -9,7 +9,7 @@ Vue.use(Router)
 
 export default new Router({
   // mode: 'hash', // default
-  mode: 'history', // 需要服务器支持，否者刷新404
+  // mode: 'history', // 需要服务器支持，否者刷新404
   routes: [
     {
       path: '/',
@@ -20,7 +20,7 @@ export default new Router({
       path: '/d',
       name: 'pull2Detail',
       component: pull2Detail
-    }，
+    },
     {
       path: '/detail2List',
       name: 'detail2List',
